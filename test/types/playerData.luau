@@ -10,4 +10,8 @@ export type PlayerProfile = {
     data: PlayerData
 }
 
+local function hello()
+    print("yo")
+end
+
 return {}
