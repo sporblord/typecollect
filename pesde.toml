@@ -1,7 +1,7 @@
 name = "sporblord/typecollect"
 version = "0.3.0"
 description = "Exports the types from a set of Luau files into a single file."
-authors = ["thalorum"]
+authors = ["sporblord"]
 license = "MIT"
 
 includes = ["LICENSE", "README.md", "pesde.toml"]
