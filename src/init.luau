@@ -1,58 +1,50 @@
 --!strict
 local process = require("@lune/process")
-local regex = require("@lune/regex")
 local fs = require("@lune/fs")
+local stdio = require("@lune/stdio")
+local files = require("./files")
 
-local VERSION = "0.1.1"
+local VERSION = "0.3.0"
 
-local function getSubfiles(dir: string)
-    dir = string.gsub(dir, "%s+", "")
-    if string.sub(dir, #dir, #dir) ~= "/" then
-        dir = `{dir}/`
+-- Process arguments
+local inputPath: string?
+local useForce = false
+for i, arg in process.args do
+    if arg == "-o" then
+       inputPath = process.args[i + 1]
+    elseif arg == "-f" then
+        useForce = true
     end
-
-    local files = {}
-    for _, entry in fs.readDir(dir) do
-        local entryPath = `{dir}{entry}`
-        if fs.isFile(entryPath) then
-            table.insert(files, entryPath)
-        else
-            for _, file in getSubfiles(entryPath) do
-                table.insert(files, file)
-            end
-        end
-    end
-
-    return files
 end
 
-local function removeExtension(str: string)
-    return string.match(str, "^(.-)%.%w+$")
+if not inputPath then
+    warn("No input path passed.")
+    return
 end
 
--- Get types directory
-local inputPath: string? = process.args[1]
-assert(inputPath, "No input path passed. Please run the file with `typecollect path/to/directory`")
-assert(fs.isDir(inputPath), `Invalid directory \`{inputPath}\``)
+if not fs.isDir(inputPath) then
+    warn(`Invalid directory \`{inputPath}\``)
+    return
+end
 
 inputPath = string.gsub(inputPath, "%s+", "")
 if string.sub(inputPath, #inputPath, #inputPath) ~= "/" then
     inputPath = `{inputPath}/`
 end
 
-local inputPathBranches =string.split(inputPath, "/")
+local inputPathBranches = string.split(inputPath, "/")
 local inputDirName = inputPathBranches[#inputPathBranches - 1]
 
 local exportFile = `{inputPath}init.luau`
 -- assert(fs.isFile(exportFile), `Directory {inputPath} does not have a valid init.luau file.`)
 
 -- Gather type files
-local subfiles = getSubfiles(inputPath)
+local subfiles = files.getSubfiles(inputPath)
 local typefiles = {}
 
 for _, file in subfiles do
     local branches = string.split(file, "/")
-    local fileName = removeExtension(branches[#branches])
+    local fileName = files.removeExtension(branches[#branches])
     if fileName ~= "init" then
         typefiles[fileName] = file
     end
@@ -84,7 +76,7 @@ local exports = ""
 for fileName, fileTypes in types do
     local filePath = typefiles[fileName]
     local relativeFilePath = string.gsub(filePath, inputPath, "")
-    requires = `{requires}\nlocal {fileName} = require("./{inputDirName}/{removeExtension(relativeFilePath)}")`
+    requires = `{requires}\nlocal {fileName} = require("./{inputDirName}/{files.removeExtension(relativeFilePath)}")`
     exports = `{exports}\n`
 
     for _, type in fileTypes do
@@ -93,6 +85,22 @@ for fileName, fileTypes in types do
         end)
 
         exports = `{exports}\nexport type {type} = {fileName}.{typeDef}`
+    end
+end
+
+if not useForce then
+    stdio.write("This will ")
+    stdio.write(stdio.color("red"))
+    stdio.write("overwrite ")
+    stdio.write(stdio.color("reset"))
+    stdio.write("the file at ")
+    stdio.write(stdio.color("red"))
+    stdio.write(exportFile .. " ")
+
+    local result = stdio.prompt("confirm", "Proceed")
+    if not result then
+        print("Operation canceled")
+        return
     end
 end
 

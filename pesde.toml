@@ -1,5 +1,5 @@
-name = "thalorum/typecollect"
-version = "0.2.1"
+name = "sporblord/typecollect"
+version = "0.3.0"
 description = "Exports the types from a set of Luau files into a single file."
 authors = ["thalorum"]
 license = "MIT"
