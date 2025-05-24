@@ -4,7 +4,7 @@ Oftentimes when working on a large project, it is useful to have a designated ty
 
 However, it becomes tedious to manage multiple type files and have to require each one manually. On the contrary, having a single large types file can become disorganized quite quickly.
 
-`typecollect` aims to solve this problem by allowing you to define a directory of type files, then run a simple command to export them all into a single file.
+typecollect aims to solve this problem by allowing you to define a directory of type files, then run a simple command to export them all into a single file.
 
 ## Install
 
