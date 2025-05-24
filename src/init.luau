@@ -4,7 +4,7 @@ local fs = require("@lune/fs")
 local stdio = require("@lune/stdio")
 local files = require("./files")
 
-local VERSION = "0.3.2"
+local VERSION = "0.4.0"
 
 -- Process arguments
 local inputPath: string?

@@ -1,10 +1,10 @@
 name = "sporblord/typecollect"
-version = "0.3.2"
+version = "0.4.0"
 description = "Exports the types from a set of Luau files into a single file."
 authors = ["sporblord"]
 license = "MIT"
 
-includes = ["LICENSE", "README.md", "pesde.toml"]
+includes = ["LICENSE", "README.md", "pesde.toml", "src/files.luau"]
 
 [target]
 environment = "lune"
