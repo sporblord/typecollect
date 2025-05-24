@@ -1,5 +1,5 @@
 name = "sporblord/typecollect"
-version = "0.3.0"
+version = "0.3.2"
 description = "Exports the types from a set of Luau files into a single file."
 authors = ["sporblord"]
 license = "MIT"
@@ -12,3 +12,5 @@ bin = "src/init.luau"
 
 [indices]
 default = "https://github.com/pesde-pkg/index"
+
+[dependencies]
